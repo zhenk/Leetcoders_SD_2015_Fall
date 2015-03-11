@@ -2,6 +2,9 @@ package chapterOne;
 import java.util.*;
 import java.io.*;
 
+import javax.swing.plaf.ListUI;
+
+
 public class ChapterOne {
 
 	/*
@@ -305,20 +308,167 @@ public class ChapterOne {
 		}
 		return len;
 	}
+	
+	public static int expandfromcentral (String s, int start, int end) {
+		//boolean change = false;
+		while (start >= 0 && end < s.length() && s.charAt(start) == s.charAt(end)) {
+			start--;
+			end++;
+		//	change = true;
+		}
+		//从中间到两边扩，这个-1，极不寻常！
+			return end - start - 1;
+		
+	}
+	
+	public static String longestPalindrome (String s) {
+		//int maxlen = 0;
+		int start = 0, end = 0;
+		for (int i = 0; i < s.length(); i++) {
+			int len1 = expandfromcentral(s,i,i);
+			int len2 = expandfromcentral(s,i,i+1);
+			int len = Math.max(len1, len2);
+			//maxlen = Math.max(len, maxlen);
+			if (len > end - start) {
+				start = i - (len - 1) / 2;
+				end = i + len / 2; //这两行赞！包含了单双两种情况，不论是12345还是123456都可以！
+			}
+		}
+		//System.out.println(start+" "+end);
+		//substring子方法不包括endindex，好神奇耶!
+		return s.substring(start, end + 1);
+	}
+	
+	
+	public static int reverse (int num) {
+		int ret = 0;
+		while (num != 0) {
+			if (Math.abs(ret) > Integer.MAX_VALUE / 10) return 0;
+			ret = ret * 10 + num % 10;
+			num = num / 10;
+		}
+		return ret;
+	}
+	// the following two methods are for plus one problem. 20150310
+	// recursive methods are generally fine!
+	// think through all the cases and represent the logic into if-else and for-while loops.
+	public static int[] manipulate(int[] arr, int j) {
+		arr[j] = 0;
+		if ((j - 1) >= 0 && arr[j - 1] != 9) {
+			arr[j - 1]++;
+			return arr;
+		}
+		else if ((j - 1) >= 0) {
+			return manipulate(arr, j - 1);
+		}
+		else {
+			int[] newarr = new int[arr.length + 1];
+			for (int i = 0; i < arr.length; i++) {
+				newarr[i + 1] = 0;
+			}
+			newarr[0] = 1;
+			return newarr;
+		}
+	}
+	//
+	public static int[] plusone (int[] arr) {
+		if (arr[arr.length - 1] != 9) {
+			arr[arr.length - 1]++;
+			return arr;
+		}
+		else {
+			return manipulate(arr,arr.length - 1);
+		}	
+	}
+	
+	public static boolean ispalindromenum (int x) {
+		if (x < 0) return false;
+		Integer newx = new Integer(x);
+		String s = newx.toString();
+		int start = 0, end = 0;
+		if (s.length() % 2 != 0) {
+			int mid = s.length() / 2;
+		    start = mid - 1;
+		    end = mid + 1;
+			while (start >= 0 && end < s.length() && s.charAt(start) == s.charAt(end)) {
+				start--;
+				end++;
+			}
+		//	return end - start - 1 == s.length() ? true : false;
+		}
+		else {
+		    start = (s.length() - 1) / 2;
+			end = s.length() / 2;
+			while (start >= 0 && end < s.length() && s.charAt(start) == s.charAt(end)) {
+				start--;
+				end++;
+			}
+		}
+		return end - start - 1 == s.length() ? true : false;
+	}
+	//20150310 对链表不熟练 就地链表操作 需要额外的Node
+	//经常容易出现的食物就是null的Node操作，相当于越界，while（本身是否空）{Node往下移动！}
+	public static ListNode Merge (ListNode L1, ListNode L2) {
+		 ListNode dummyhead2 = new ListNode(0);
+	        ListNode dummyhead = dummyhead2;
+			while (L1 != null && L2 != null) {
+				if (L1.val > L2.val) {
+					dummyhead.next = L2;
+					L2 = L2.next;
+				}
+				else {
+					dummyhead.next = L1;
+					L1 = L1.next;
+				}
+				dummyhead = dummyhead.next;
+			}
+			if (L2 != null) {
+				dummyhead.next = L2;
+			}
+			if (L1 != null) {
+				dummyhead.next = L1;
+			}
+			return dummyhead2.next;
+	}
+	
+	public static ListNode addtwonum (ListNode l1, ListNode l2) {
+		ListNode dummyhead = new ListNode(0), p = l1, q = l2, m = dummyhead;
+		int carry = 0, val = 0;
+		while(p != null || q != null) {
+			int x = (p != null) ? p.val : 0;
+			int y = (q != null) ? q.val : 0;
+			val = x + y + carry;
+			carry = val / 10;
+			ListNode newnode = new ListNode (val % 10);
+			m.next = newnode;
+			m = m.next;
+		    if (p != null) p = p.next;
+			if (q != null) q = q.next;		
+		}
+		if (carry > 0) {
+			ListNode c = new ListNode(carry);
+			m.next = c;
+		}
+		return dummyhead.next;
+	}
 	public static void main(String[] args)  {
 		// TODO Auto-generated method stub
 			//int[] a = {1,2,3,4,5,6,7,8,9,10,12,13,15,17};
 			//int target = 6;
 			//int[] res = twoSum(a,target);
 			String haystack = "1";
-			String s = "ecebc"; 
+			String s = "ccc"; 
 					//println(Character.toLowerCase(a.charAt(0)) != Character.toLowerCase(b.charAt(0)) );
 		
-			
+			String ss = "abcdefg";
 	//		String[] temp = s.split(" ");
 			boolean[] exist = new boolean[256];
-			
-			System.out.println(longesttwodistinct(s));
+			int[] num = {9,9,9};
+			int[] newnum = plusone(num);
+			;
+			int x = 123212;
+			// how to convert int[] into string? use the method as follows.
+			System.out.println(ispalindromenum(x));
 			
 		
 		}
